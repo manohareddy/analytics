@@ -1,0 +1,188 @@
+---
+title: "lab4"
+author: "manohar"
+date: "October 2, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Question - 8
+a.
+```{r}
+library(ISLR)
+```
+
+```{r}
+mh<- lm(mpg ~ horsepower,data = Auto)
+summary(mh)
+```
+i. is there a relationship between the predictor and response?
+yes, the slope(beta1) of horsepower -0.157845 clearly indicates a relationship.
+
+ii. How strong is the relationship?
+mpg = 39.94 - 0.158 * horsepower + e this equation shows a strong relationship between predictor and response.
+
+iii. is the relationship positive or negative?
+from the beta1 (-0.1578) being negative and as horsepower increases mpg decreases we can conclude that there is a negative relation.
+
+iv. what is the predicted mpg asociated with a horsepower of 98? what are associated 95% CI and prediction intervals?
+```{r}
+predict(mh, data.frame(horsepower=98), interval="confidence")
+
+```
+the predicted mpg is 24.467 miles per gallon.
+the associated 95% CI is 23.97308 - 24.96108
+```{r}
+predict(mh, data.frame(horsepower=98), interval="prediction")
+```
+the associated prediction interval is 14.8094 - 34.12476
+
+b) plot response and the predictor use abline() for least squares
+```{r}
+plot(Auto$horsepower, Auto$mpg, main = "mpg vs. horsepower", xlab = "horsepower", ylab = "mpg")
+abline(mh)
+
+```
+c) use plot() to produce diagnostic plots
+
+```{r}
+plot(mh)
+```
+residuals vs fitted show high variance in the data. and the data points are non-linear.residuals vs leverage shows the outliers and points that are far from the line effect the overall plot.
+
+##Question 10.
+```{r}
+head(Carseats)
+```
+a. fit a multiple regression to predict sales using price+urban+us
+
+```{r}
+mr<- lm(Sales~Price+Urban+US, data = Carseats)
+mr
+```
+
+b. provide an interpretation of coefficient in the model.
+```{r}
+summary(mr)
+```
+there is a negative corelation with price so increase in price of a car we can see a decrease in sales.
+theres a positive corelation with cars sold in US this is a qualitative variable. 
+from the p value of UrbanYes we do not reject the null making cars sold sold in urban areas has no affect in the sales.
+
+c. write the model equation
+ 
+ sales = 13.043 -0.0544*Price + 1.2(US(1 for USyes/ 0 for USno)) - 0.02191(Urban (1 for urbanyes/ 0 for urbanno))
+ 
+d.for which predictors can you reject the null hypothesis
+
+for Price and USYes we can reject the null because the p values show significance.
+
+e. 
+```{r}
+mr_new = lm(Sales ~ Price+US, data = Carseats)
+summary(mr_new)
+```
+
+f. 
+the model e fits well and probably liltle bit better than a.
+
+g. obtain confidence inteval of coefficients in e.
+```{r}
+confint(mr_new)
+```
+
+h. 
+is there evedence of outliers or high leverage obs in model e.
+
+```{r}
+plot(mr_new)
+```
+
+There are outliers above near 3
+
+##Question 14
+a.
+```{r}
+set.seed(1)
+x1=runif (100)
+x2=0.5*x1+rnorm (100)/10
+y=2+2*x1+0.3*x2+rnorm (100)
+
+```
+
+y = 2 + 2*x1 + 0.3*x2 +e
+
+regression coefficients
+intercept = 2
+beta1 = 2
+beta2 = 0.3
+
+b.
+```{r}
+cor(x1,x2)
+```
+```{r}
+plot(x1, x2)
+```
+
+yes there is a positive corelation
+
+c.
+```{r}
+lmm= lm(y~x1+x2)
+summary(lmm)
+
+```
+
+beta0 hat = 2.13 beta0 =2
+beta1 hat = 1.439 beta1 = 2
+beta2 hat = 1.0097 beta2 = 0.3
+
+yes we can reject the null for beta1
+
+we accept null for beta2 seeing pvalues
+
+d.
+```{r}
+lmx1 = lm(y~x1)
+summary(lmx1)
+```
+
+yes we reject the null as the x1 shows statistically significant pvalue
+
+e.
+```{r}
+lmx2= lm(y~x2)
+summary(lmx2)
+```
+
+we reject the null as x2 shows a statistically significant p value individiually.
+
+f,
+we have gat different results from c and e, but i would say they donot contradict each other as we saw the colinearity between x1 and x2. 
+
+g.
+```{r}
+x1=c(x1, 0.1)
+x2=c(x2, 0.8)
+y=c(y,6)
+```
+
+```{r}
+lmm=lm(y~x1+x2)
+summary(lmm)
+lmx1=lm(y~x1)
+summary(lmx1)
+lmx2=lm(y~x2)
+summary(lmx2)
+plot(lmm)
+plot(lmx1)
+plot(lmx2)
+```
+
+interestingly after adding new elements we see x1 being less significant with high p values in plot for x1+x2
+but individually they are highly significant.
+the leverage resedual graphs show x1's newlly added point as an outlier

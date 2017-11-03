@@ -1,0 +1,76 @@
+---
+title: "lab-2"
+author: "manohar"
+date: "September 9, 2017"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1)a)What is the result of the following code?
+
+```{r}
+nth <- paste(1:12, c("st", "nd", "rd", rep("th", 9)), sep = "")
+paste(month.abb, nth, sep = " ")
+paste(month.abb, nth, sep = " ", collapse = "; ")
+```
+
+##b) Explain in your own words the difference between the last two paste() calls above. What does collapse do?
+
+--The first paste function brings in two vectors month.abb with months and nth which we created and produces a 12 invidual strings whereas while using collapse argument concatenates into a single string .
+
+##c) What do you expect the following code to do?
+concatenates all months in month.abb with ; into a single string with collapse
+```{r}
+paste(month.abb, collapse = "; ")
+```
+
+##d)Below are the keys (variable keys) and values (variable values). Write code to create a string JSON
+object denoting the object specified by the keys and values:
+
+```{r}
+keys <- c("country", "city", "zipcode", "address", "DOB", "occupation", "degree")
+values <- c("US", "Indianapolis", "46202", "410 W Tenth St.", "01/01/2017", "Data Scientist", "PhD")
+
+paste(keys, values, sep =": " , collapse=" ")
+```
+
+##2) Write three ways to come up with all odd integers between 1 and 35 (including 1 and 35)
+
+```{r}
+#first
+seq(1, 35, by=2)
+
+#Second
+a<-1:35
+a[a%%2!=0]
+
+#third
+for (i in 1:35){
+  if(i%%2!=0){
+    print(i)
+  }
+}
+
+```
+## Q3 Using the ChickWeight dataset, provide a histogram of the weight variable using base R graphics.
+
+
+```{r}
+hist(ChickWeight$weight, xlab = 'weights in grams', main ='Histogram of chick weights')
+
+```
+Please provide a boxplot of the weight variable by Diet - use the boxplot() function do this.
+
+```{r}
+attach(ChickWeight)
+boxplot(weight~Diet, xlab ='Diet', ylab='weight', main = 'Boxplot Diet vs Weight')
+```
+Do you see anything about this data that is worth noting?
+
+

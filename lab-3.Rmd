@@ -1,0 +1,113 @@
+---
+title: "lab-3"
+author: "manohar"
+date: "September 17, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## question 1
+a) An atomic vector of your own choice
+
+a<-c(1:3,10)
+
+b) A list of your own choice
+
+l<-list('you'=1,0,'me'=0)
+
+c) An augmented vector of your own choice (You’ll use the attr()) function for this, or create an object that has attributes associated with it by default
+
+```{r}
+attributes(matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE))
+m<-matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
+```
+## question 2
+Create a function called summ2() which can be used with apply() in order to obtain the minimum, maximum, mean, median, and standard deviation for each of the columns of a matrix. Demonstrate using this function on a matrix 100 by 5 matrix of standard normal variables (you’ll need function rnorm() for this)
+```{r}
+library(TeachingDemos)
+set.seed(char2seed('manohar'))
+mat<-matrix(rnorm(500,10,1), nrow = 100, ncol = 5, byrow = TRUE)
+
+summ2<-function(x){return (c(min(x),max(x),median(x), mean(x), sd(x)))}
+apply(mat, 2, summ2)
+```
+## question 3
+Consider the list created below. Write a short script using lapply() to test which elements in the list are functions. Then return only those list elements which are functions and assign this result to variable listSub. Make sure that the function you create will work with arbitrary lists. It is not acceptable to just figure out yourself which elements contain functions and subset bigList below. Make it automated and flexible
+
+```{r}
+bigList <- list(x = 1:8, y = data.frame(norm = rnorm(5, 0, 1)), z = function(x) {x}, t1 = function(x, y) {x + y ^ exp(x)}, char = "This is a character", t2 = function(lambda) {lambda ^ (1 / pi)})
+
+l= lapply(bigList, function(e){if(mode(e)=='function'){return(e)} })
+listSub<-unlist(l)
+print(listSub)
+```
+## question 4
+Modifying function knnPredV() to take a general dataset with variable names and a formula for the variables to use in clustering: For this exercise, we will continue to use knnPredV() defined in the notes and listed below for reference (along with knnMat):
+## knnMat definition
+set.seed(1234)
+y <- rbinom(10, 1, 0.5)
+x <- rnorm(10, 1.5 * y, 1)
+knnMat <- cbind(y, x)
+## knn function definition
+knnPredV <- function(x, k = 3)
+{
+dist <- sapply(x, function(t) {sqrt((t - knnMat[,2])^2)})
+newMat <- cbind(knnMat, dist)
+apply(newMat[,3:dim(newMat)[2]], MARGIN = 2,
+FUN = function(t) {mat <- cbind(knnMat, t)
+newMat <- mat[order(t),]
+subMat <- newMat[1:k,]
+if (k > 1) {class <- mean(subMat[,1])} else {
+class <- mean(subMat[1])
+}
+return(ifelse(class >= 0.5, 1, 0))})
+}
+
+We mentioned some of the issues with this function, even though we’ve made it better by vectorizing it above:
+1) the x values have to be the second column of knnMat. 
+2) We have to name our training dataset knnMat. 
+3) The function knnPredV() only allows using one x variable for clustering. 
+4) This function is only usable for
+classifying into 1 of two classes, 1 or 0 (yes or no, diseased or non-diseased, etc.) 
+5) This function does’t handle tie breaks, and there are probably other issues we can find
+
+I’d like you to first address problem 1) and 2) - this can be done by using having a user specify a matrix with column names, and noting which column name holds the variable for clustering. Please modify knnPredV() and to accomplish this, and name the resulting function knnPredV2(). It might be most helpful to you if you define two new variables for knnPredV2() - trainData (the training data) and clVar (the variable used for the clustering and prediction)
+solution:
+```{r}
+# knn function definition
+knnPredV2 <- function(x, trainData, clVar, k = 3)
+{
+dist <- sapply(x, function(t) {sqrt((t - trainData[,clVar])^2)})
+newMat <- cbind(trainData, dist)
+apply(newMat[,dim(newMat)[2], drop=F], MARGIN = 2,
+FUN = function(t) {mat <- cbind(trainData, t)
+newMat <- mat[order(t),]
+subMat <- newMat[1:k,]
+if (k > 1) {class <- mean(subMat[,1])} else {
+class <- mean(subMat[1])
+}
+return(ifelse(class >= 0.5, 1, 0))})
+}
+
+y <- rbinom(10, 1, 0.5)
+x <- rnorm(10, 1.5 * y, 1)
+z <- rnorm(10, 0.5 * x, 1)
+knnMat <- cbind(y, x, z)
+knnPredV2(2, knnMat, 3, 2)
+```
+
+##question 5
+Create a simple factor variable in R and name it factor1. Give it three levels of your choice. Then, run typeof() on this factor. What happened? You can read about factors in R by typing ?factor in the console and hitting enter. The R package forcats is also very helpful for working with factors. You can read about it here
+```{r}
+fu<-c(1,2,3,3,2,1,2,3,1)
+factor1<-factor(fu, levels = c(1,2,3))
+factor1
+is.factor(factor1)
+typeof(factor1)
+class(factor1)
+?factor
+```
+

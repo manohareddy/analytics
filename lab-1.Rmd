@@ -1,0 +1,242 @@
+---
+title: "Lab-1"
+author: "manohar"
+date: "September 3, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Auto
+Load the library ISLR, remove the rows of missing values with na.omit()
+
+
+
+```{r Auto}
+library('ISLR')
+Auto = na.omit(Auto)
+dim(Auto)
+str(Auto)
+```
+
+## Question 1- which of the predictors are quantitative and which are qualitative
+
+
+```{r }
+names(Auto)
+Auto$cylinders<-as.factor(Auto$cylinders)
+#Auto$year<-as.factor(Auto$year)
+Auto$origin<-as.factor(Auto$origin)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Answer
+from the structure and column names we can tell that.
+mpg, displacement, horsepower, weight, acceleration are quantitative.
+origin, name are qualitative.
+for columns- cylinders and year we may prefer to use them as qualitative as cylinders have 5 levels and year has 13 levels from 1970-1982.
+
+## A-9.b
+range of quantitative predictors
+
+```{r}
+
+range(Auto$mpg)
+attach(Auto)
+range(weight)
+range(displacement)
+range(horsepower)
+range(acceleration)
+```
+## A-9 c
+
+mean and standard deviation of each quantitative variable
+
+```{r}
+#summary(Auto)
+mean(mpg)
+mean(displacement)
+mean(horsepower)
+mean(weight)
+mean(acceleration)
+sd(mpg)
+sd(displacement)
+sd(horsepower)
+sd(weight)
+sd(acceleration)
+```
+## A-9 d
+Removing rows from 10th through 85th.
+
+```{r}
+Auto_new = Auto[-c(10:84),]
+#Auto_new
+attach(Auto_new)
+mean(mpg)
+mean(displacement)
+mean(horsepower)
+mean(weight)
+mean(acceleration)
+sd(mpg)
+sd(displacement)
+sd(horsepower)
+sd(weight)
+sd(acceleration)
+```
+
+
+## a-9 e
+
+```{r}
+attach(Auto)
+plot(cylinders, mpg, col=2, varwidth = T, horizontal =T)
+
+```
+the above plot we see 4 cylindered cars are more efficient giving an average fuel economy of 28 mpgs(approx). 8 cylindered cars are least efficient.
+
+```{r}
+plot(cylinders, horsepower)
+
+```
+8 cylinder cars are very powerful with an avg horsepower of 150hp.
+```{r}
+
+plot(horsepower, mpg)
+cor(horsepower, mpg)
+```
+we can see a negative correlation of -0.7784 with predictors mpg and horsepower. as the horsepower is increasing mpg decreases.
+```{r}
+year <- as.factor(year)
+plot(year, mpg)
+
+#plot(name, mpg)
+```
+As the years progressed from 1970 to 1982 the overall car became more efficient.
+```{r}
+plot(weight, acceleration, type = 'p')
+```
+we see a lot of variability in the plot between weight and acceleration but definetly there is some negative correlation.
+```{r}
+
+plot(origin, mpg)#interesting
+
+```
+Japanese(JDMs) are more efficient, American cars aren't that efficient.
+
+## A-10 a
+Load MASS
+check out Boston
+```{r}
+library(MASS)
+#Boston
+?Boston
+dim(Boston)
+str(Boston)
+```
+There are 506 rows and 14 columns.
+crim - per capita crime rate by town.
+zn - proportion of residential land zoned for lots over 25,000 sq.ft.
+indus - proportion of non-retail business acres per town.
+chas - Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).
+nox - nitrogen oxides concentration (parts per 10 million).
+rm - average number of rooms per dwelling.
+age - proportion of owner-occupied units built prior to 1940.
+dis - weighted mean of distances to five Boston employment centres.
+rad - index of accessibility to radial highways.
+tax - full-value property-tax rate per \$10,000.
+ptratio - pupil-teacher ratio by town.
+black - 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.
+lstat - lower status of the population (percent).
+medv - median value of owner-occupied homes in \$1000s.
+
+## A-10 b
+pairwise scatter plots
+```{r}
+attach(Boston)
+pairs(Boston)
+pairs(~nox+dis+rad+chas, Boston)
+
+```
+we see a negative corelation between nox and dis which means densely packed areas have higher nitogen oxide levels. nitrogen oxide levels are lower near charles river. index of accessibility to radial highways(rad) have high variability for both nox and dis.
+
+
+
+
+## A-10 c
+
+predictors associated with percapita crime
+
+```{r}
+plot(tax, crim)
+plot(rad,crim)
+plot(lstat, crim)
+plot(medv, crim)
+plot(age, crim)
+plot(chas, crim)
+plot(zn, crim)
+```
+Suprisingly crime rate is higher in higher tax level suburbs. Blacks have no corelation with crime in Boston. crime rate is lower in lower median value(medv suburbs). crime is more in old neighborhoods. less crime in suburbs near charles river.
+
+## A - 10 d
+do any ares have high crime rate, tax, ptratio
+
+```{r}
+range(crim)
+summary(crim)
+range(tax)
+summary(tax)
+range(ptratio)
+summary(ptratio)
+```
+
+```{r}
+length(which(Boston[,1]>3.67))
+length(which(Boston[,10]>666.0))
+length(which(ptratio>20.2))
+```
+range of crime rates in Boston are 0.00632-88.97, we see the third quartile at 3.67 this means that crime rates are skewed there are lot of safe suburbs in boston but also high crime rates. tax predictor seems to follow a normal distribution of intervals lowest tax is 187 and highest taxed suburb is 711.
+pupil teacher ratios also seen to be higher in few suburbs with 22 being highest. there are 56(13%) suburbs with high pupil teacher ratios.
+
+## A-10 e
+number of suburbs bound by charles river.
+```{r}
+length(which(chas==1))
+```
+35 suburbs 
+
+## A-10 f
+median pupil teacher ratio
+```{r}
+median(ptratio)
+```
+
+## A-10 g
+suburb with lowest median value of owner-occupied homes. and values of other predictors.
+```{r}
+Boston[medv==min(medv),] 
+sapply(Boston, range)
+rbind(Boston[medv==min(medv),], sapply(Boston, range))
+```
+Both suburbs with lowest medv have higher crime rates, nox levels, tax, black population, lstat.
+but still it has good pupil-teacher ratio,
+nearer to other towns(dis)
+poorly accesible to highways(rad)
+both are old neighbourhoods built before 1940's.
+## A-10 h
+how many suburbs avg more than 7 rooms and 8 rooms?
+```{r}
+length(which(rm>7))
+length(which(rm>8))
+#Boston[rm>=8,]
+
+rbind(sapply(Boston[rm>=8,], mean),sapply(Boston,mean))
+```
+
+Suburbs with average num of rooms per dwelling > 8 has low crime rate, bigger plot sizes(zn), less non retail business acres, abit older neighbourhoods, lower tax, somewhat high num of black population, less lower status population, hi
+
+gh median value of owner-occupied homes.
+```{r}
+sapply(Boston[rm>8,],mean)
+```
